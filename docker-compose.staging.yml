@@ -14,10 +14,10 @@ services:
     depends_on:
       - db
     environment:
-      DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
+      DB_CONNECTION_STRING: "host=db;port=5432;database.py=users;username=ParkPals;password=ParkPals"
   cron:
     image: parkpal-backend_cron:latest
     depends_on:
       - db
     environment:
-        DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
+        DB_CONNECTION_STRING: "host=db;port=5432;database.py=users;username=ParkPals;password=ParkPals"

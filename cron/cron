@@ -1,1 +1,8 @@
-* * * * * PYTHONPATH=/usr/local/lib/python3.7/site-packages/ python /cron.py > /cron.log 2>&1
+PYTHONPATH="/usr/local/lib/python3.7/site-packages"
+DB_USER="parkpal"
+DB_PASSWORD="secret"
+DB_HOST="db"
+DB_PORT="5432"
+DB_NAME="carparks"
+
+* * * * * python3 /cron/cron.py > /cron/cron.log 2>&1

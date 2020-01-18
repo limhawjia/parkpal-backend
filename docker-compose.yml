@@ -3,21 +3,23 @@ version: '3.3'
 services:
   db:
     image: postgres:12.1
+    restart: always
     environment:
-      POSTGRES_USER: "ParkPals"
-      POSTGRES_PASSWORD: "ParkPals"
-      POSTGRES_DB: "parking_lots"
+      POSTGRES_USER: parkpal
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: carparks
   web:
-    build: ./main-api
+    build:
+      context: ./
+      dockerfile: ./main-api/Dockerfile
     ports:
       - 80:5000
     depends_on:
       - db
-    environment:
-      DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
+
   cron:
-    build: ./cron
+    build:
+      context: ./
+      dockerfile: ./cron/Dockerfile
     depends_on:
       - db
-    environment:
-        DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
