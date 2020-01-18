@@ -7,8 +7,8 @@ ENV DB_PASSWORD "secret"
 ENV DB_HOST "db"
 ENV DB_PORT "5432"
 ENV DB_NAME "carparks"
-COPY /cron /cron
-COPY /database /cron/database
+COPY /main/cron /cron
+COPY /main/database /cron/database
 WORKDIR /cron
 RUN touch cron.log
 RUN pip install -r requirements.txt

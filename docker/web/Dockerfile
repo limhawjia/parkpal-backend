@@ -5,8 +5,8 @@ ENV DB_PASSWORD "ParkPal"
 ENV DB_HOST "db"
 ENV DB_PORT "5432"
 ENV DB_NAME "parking_lots"
-COPY /main-api /main-api
-COPY /database /main-api/database
+COPY /main/web /main-api
+COPY /main/database /main-api/database
 WORKDIR /main-api
 RUN pip install -r requirements.txt
 CMD flask run --host=0.0.0.0

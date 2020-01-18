@@ -3,8 +3,8 @@
 from datetime import datetime
 import pytz
 from multiprocessing import Process
-from database import CarPark
-from database import Database
+from main.database import CarPark
+from main.database import Database
 
 
 def log_cron():

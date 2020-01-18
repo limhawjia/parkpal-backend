@@ -11,7 +11,7 @@ services:
   web:
     build:
       context: ./
-      dockerfile: ./main-api/Dockerfile
+      dockerfile: docker/web/Dockerfile
     ports:
       - 80:5000
     depends_on:
@@ -20,6 +20,6 @@ services:
   cron:
     build:
       context: ./
-      dockerfile: ./cron/Dockerfile
+      dockerfile: docker/cron/Dockerfile
     depends_on:
       - db
