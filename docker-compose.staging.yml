@@ -16,20 +16,8 @@ services:
     environment:
       DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
   hdb:
-    image: parkpalbackend_hdb:latest
+    image: parkpalbackend_cron:latest
     depends_on:
       - db
     environment:
         DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
-  ura:
-    image: parkpalbackend_ura:latest
-    depends_on:
-      - db
-    environment:
-      DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
-  lta:
-    image: parkpalbackend_lta:latest
-    depends_on:
-      - db
-    environment:
-      DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
