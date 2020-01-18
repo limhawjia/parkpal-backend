@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  db:
+    image: postgres:12.1
+    environment:
+      POSTGRES_USER: "ParkPals"
+      POSTGRES_PASSWORD: "ParkPals"
+      POSTGRES_DB: "parking_lots"
+  web:
+    build: ./main-api
+    ports:
+      - "80:5000"
+    depends_on:
+      - db
+    environment:
+      DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
+  hdb:
+    build: ./hdb-cron
+    depends_on:
+      - db
+    environment:
+        DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
+  ura:
+    build: ./ura-cron
+    depends_on:
+      - db
+    environment:
+      DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
+  lta:
+    build: ./lta-cron
+    depends_on:
+      - db
+    environment:
+      DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
