@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: "ParkPals"
       POSTGRES_DB: "parking_lots"
   web:
-    build: ./main-api
+    image: parkpalbackend_web:latest
     ports:
       - 80:5000
     depends_on:
@@ -16,19 +16,19 @@ services:
     environment:
       DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
   hdb:
-    build: ./hdb-cron
+    image: parkpalbackend_hdb:latest
     depends_on:
       - db
     environment:
         DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
   ura:
-    build: ./ura-cron
+    image: parkpalbackend_ura:latest
     depends_on:
       - db
     environment:
       DB_CONNECTION_STRING: "host=db;port=5432;database=users;username=ParkPals;password=ParkPals"
   lta:
-    build: ./lta-cron
+    image: parkpalbackend_lta:latest
     depends_on:
       - db
     environment:

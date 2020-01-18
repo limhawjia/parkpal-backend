@@ -1,0 +1,24 @@
+language: python
+python: 3.7.5
+stages:
+  - Tests
+  - Deploy Staging
+    if: branch = staging
+    
+jobs:
+  include:
+    - stage: Tests
+    - name: Integration Tests
+      python: 3.7.5
+      before_install: chmod +x -R ./scripts
+      script: "./scripts/integration_tests.sh"
+    - stage: Deploy Staging
+      name: Deploy
+      before_install:
+        - chmod +x -R ./scripts
+        - openssl aes-256-cbc -K $encrypted_6a26c3f506ef_key -iv $encrypted_6a26c3f506ef_iv
+          -in credentials.enc -out ./credentials -d
+        - chmod 600 credentials
+      script: "./scripts/deploy.sh"
+
+script: pytest
