@@ -1,4 +1,5 @@
 FROM python:3.7.5
+
 ENV FLASK_APP "parkpal.py"
 ENV DB_USER "ParkPal"
 ENV DB_PASSWORD "ParkPal"
@@ -10,5 +11,5 @@ COPY ./main/ /main
 COPY requirements.txt /
 
 RUN pip install -r requirements.txt
-RUN cd main
+WORKDIR /main
 CMD ["flask", "run", "--host=0.0.0.0"]
