@@ -1,6 +1,6 @@
 FROM python:3.7.5
 
-RUN apt-get -y update && apt-get -y upgrade
+RUN apt-get update || true
 RUN apt-get install -y cron
 
 ENV PYTHONPATH "/usr/local/lib/python3.7/site-packages"
