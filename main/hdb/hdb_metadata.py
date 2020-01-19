@@ -7,7 +7,8 @@ import pytz
 import requests
 import itertools
 from datetime import datetime
-from .database import CarPark
+from main.database import CarPark
+from main.database import Database
 
 url = 'https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c'
 
@@ -27,14 +28,12 @@ def cron():
     print("Pulling HDB carpark metadata...")
 
     raw_carparks = requests.get(url).json()["result"]["records"]
-    transformations = itertools.islice(map(convert_to_data_model, raw_carparks), 10)
+    transformations = map(convert_to_data_model, raw_carparks)
     carpark_data_models = map(get_coordinate_from_address, transformations)
 
-    print(list(carpark_data_models))
-
-    # session = Database().get_session()
-    # session.add(CarPark(address='USP', x_coordinate=20.1, y_coordinate=51.2, lots_available=2))
-    # session.commit()
+    session = Database().get_session()
+    session.bulk_save_objects(carpark_data_models)
+    session.commit()
 
 
 def convert_to_data_model(raw_carpark):
