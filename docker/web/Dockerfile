@@ -1,11 +1,11 @@
 FROM python:3.7.5
 
 ENV FLASK_APP "parkpal.py"
-ENV DB_USER "ParkPal"
-ENV DB_PASSWORD "ParkPal"
+ENV DB_USER "parkpal"
+ENV DB_PASSWORD "secret"
 ENV DB_HOST "db"
 ENV DB_PORT "5432"
-ENV DB_NAME "parking_lots"
+ENV DB_NAME "carparks"
 
 COPY ./main/ /main
 COPY requirements.txt /
