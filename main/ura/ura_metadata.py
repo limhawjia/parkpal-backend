@@ -12,7 +12,7 @@ import main.database.carpark_utils as cu
 import main.geocoding as gc
 
 token_url = 'https://www.ura.gov.sg/uraDataService/insertNewToken.action'
-access_key = os.environ["URA_API_ACCESS_KEY"]
+access_key = os.environ.get("URA_API_ACCESS_KEY", None) or exit('URA_API_ACCESS_KEY not defined.')
 data_url = 'https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Details'
 
 
@@ -39,8 +39,8 @@ def pull():
 
     raw_carparks = response.json()['Result']
 
-    transformations1 = map(convert_to_data_model, raw_carparks)
-    transformations2 = itertools.islice(transformations1, 10)
+    transformations1 = itertools.islice(raw_carparks, 10)
+    transformations2 = map(convert_to_data_model, transformations1)
     transformations3 = itertools.groupby(transformations2, lambda x: x.third_party_id)
     transformations4 = map(lambda x: x[1], transformations3)
     transformations5 = map(lambda x: list(x), transformations4)
