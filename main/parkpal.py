@@ -32,14 +32,15 @@ def query_carparks_within(latitude, longitude, radius, session):
 
 
 def to_carpark_response(carpark, curr_latitude, curr_longitude):
-    return CarParkResponse(carpark.address, carpark.price, carpark.latitude, carpark.longitude,
+    return CarParkResponse(carpark.address, carpark.price, carpark.latitude, carpark.longitude, carpark.lots_available,
                            carpark.great_circle_distance_from(curr_latitude, curr_longitude))
 
 
 class CarParkResponse:
-    def __init__(self, address, price, latitude, longitude, curr_distance):
+    def __init__(self, address, price, latitude, longitude, lots_available, curr_distance):
         self.address = address
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
+        self.lots_available = lots_available
         self.curr_distance = curr_distance
