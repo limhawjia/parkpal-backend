@@ -1,12 +1,6 @@
 from .database import Base
+from .source import Source
 from sqlalchemy import Column, Integer, String, DECIMAL, Enum
-import enum
-
-
-class Source(enum.Enum):
-    HDB = 1,
-    LTA = 2,
-    URA = 3
 
 
 class CarPark(Base):
@@ -17,5 +11,5 @@ class CarPark(Base):
     longitude = Column(DECIMAL, nullable=False)
     latitude = Column(DECIMAL, nullable=False)
     lots_available = Column(Integer)
-    source = Column(Enum(Source), nullable=False, )
+    source = Column(Enum(Source, name="source"), nullable=False, )
     third_party_id = Column(String, nullable=False)
