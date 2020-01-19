@@ -28,18 +28,28 @@ def pull():
         print("Empty response. LTA carpark metadata not available")
         return
 
+    print('fuck')
+
     raw_carparks = response.json()['value']
 
     transformations1 = itertools.islice(raw_carparks, 100)
     transformations2 = map(convert_to_data_model, transformations1)
     transformations3 = filter(lambda x: x is not None, transformations2)
-    carpark_data_models = list(transformations3)
+    transformations4 = itertools.groupby(transformations3, lambda x: x.third_party_id)
+    transformations5 = map(lambda x: x[1], transformations4)
+    transformations6 = map(list, transformations5)
+    transformations7 = map(lambda x: x[0], transformations6)
+    carpark_data_models = list(transformations7)
 
     cu.update_carpark_metadata(carpark_data_models)
 
 
 def get_lat_long(coordinates):
     lat_long = coordinates.split(' ')
+
+    if len(lat_long) != 2:
+        return None, None
+
     return lat_long[0], lat_long[1]
 
 
@@ -47,12 +57,12 @@ def convert_to_data_model(raw_carpark):
     address = raw_carpark["Development"]
     source = Source.LTA
     third_party_id = raw_carpark["CarParkID"]
-    coordinate = raw_carpark['Location']
+    coordinates = raw_carpark['Location']
 
-    if len(coordinate) != 2:
+    latitude, longitude = get_lat_long(coordinates)
+
+    if latitude is None:
         return None
-
-    latitude, longitude = get_lat_long(coordinate)
 
     return CarPark(address=address,
                    source=source,
