@@ -6,3 +6,6 @@ DB_PORT="5432"
 DB_NAME="carparks"
 
 * * * * * python3 -m main.hdb.hdb_cron > /cron/cron.log 2>&1
+* * * * * python3 -m main.ura.ura_cron > /cron/cron.log 2>&1
+* * * * * python3 -m main.lta.lta_cron > /cron/cron.log 2>&1
+

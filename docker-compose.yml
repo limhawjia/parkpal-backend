@@ -21,5 +21,7 @@ services:
     build:
       context: ./
       dockerfile: docker/cron/Dockerfile
+    environment:
+      GOOGLE_GEOCODING_API_KEY: ${GOOGLE_GEOCODING_API_KEY}
     depends_on:
       - db

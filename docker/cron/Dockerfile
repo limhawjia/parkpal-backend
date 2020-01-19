@@ -10,14 +10,18 @@ ENV DB_HOST "db"
 ENV DB_PORT "5432"
 ENV DB_NAME "carparks"
 
-COPY ../../main/ /main
+COPY main/ /main
+COPY cron /
+COPY /scripts/cron_start.sh /
+COPY requirements.txt /
+
 RUN touch hdb_cron.log
 RUN touch ura_cron.log
 RUN touch lta_cron.log
 
 RUN pip install -r requirements.txt
-RUN chmod +x ./startup.py
-RUN python -m main.startup
-
+RUN chmod +x ./main/startup.py
+RUN chmod +x ./cron_start.sh
 RUN crontab cron
-CMD ["cron", "-f"]
+
+CMD ["./cron_start.sh"]
