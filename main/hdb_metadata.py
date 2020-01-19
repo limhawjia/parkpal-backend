@@ -5,10 +5,11 @@
 import os
 import pytz
 import requests
+import itertools
 from datetime import datetime
-from datapythbase import CarPark
+from .database import CarPark
 
-url = 'https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c&limit=20'
+url = 'https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c'
 
 
 def main():
@@ -26,7 +27,7 @@ def cron():
     print("Pulling HDB carpark metadata...")
 
     raw_carparks = requests.get(url).json()["result"]["records"]
-    transformations = map(convert_to_data_model, raw_carparks)
+    transformations = itertools.islice(map(convert_to_data_model, raw_carparks), 10)
     carpark_data_models = map(get_coordinate_from_address, transformations)
 
     print(list(carpark_data_models))
@@ -43,10 +44,14 @@ def convert_to_data_model(raw_carpark):
 
 def get_coordinate_from_address(data_model):
     address = data_model.address
+    print(address)
     endpoint = 'https://maps.googleapis.com/maps/api/geocode/json'
     payload = {'address': address, 'key': os.environ['GOOGLE_GEOCODING_API_KEY']}
-    coordinates = requests.get(endpoint, params=payload)['results']['geometry']['location']
-    return CarPark(address=data_model.address, longitude=coordinates['lng'], latitude=coordinates['lat'])
+    results = requests.get(endpoint, params=payload).json()['results']
+
+    if len(results) != 0:
+        coordinates = requests.get(endpoint, params=payload).json()['results'][0]['geometry']['location']
+        return CarPark(address=data_model.address, longitude=coordinates['lng'], latitude=coordinates['lat'])
 
 
 main()
