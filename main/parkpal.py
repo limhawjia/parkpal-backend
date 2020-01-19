@@ -1,12 +1,9 @@
-from flask import Flask
-from flask import request
-from flask import abort
+from flask import Flask, request, abort, jsonify
 from main.database import Database
 from main.database import CarPark
-from decimal import Decimal
-import math
 
 app = Flask(__name__)
+db = Database()
 
 
 @app.route('/')
@@ -18,30 +15,31 @@ def hello():
 def get_availability():
     latitude = request.args.get('latitude', default=None, type=float) or abort(400, 'latitude not specified')
     longitude = request.args.get('longitude', default=None, type=float) or abort(400, 'longitude not specified')
-    # radius = request.args.get('radius', default=100.0, type=Decimal)
-    # session = Database().get_session()
-    # query_carparks_within(latitude, longitude, radius, session)
-    f = distance_from(0.0, 0.0, latitude, longitude)
-    app.logger.warning(str(f))
-    return str(f)
+    radius = request.args.get('radius', default=500.0, type=float)
+    session = db.get_session()
+    queries = query_carparks_within(latitude, longitude, radius, session)
+    session.close()
+
+    responses = map(to_carpark_response, queries)
+    return jsonify(responses)
 
 
 def query_carparks_within(latitude, longitude, radius, session):
-    queries = session.query(CarPark) \
-        .order_by(CarPark.distance_from(latitude, longitude, app))
+    return session.query(CarPark) \
+        .order_by(CarPark.great_circle_distance_from(latitude, longitude)) \
+        .filter(CarPark.great_circle_distance_from(latitude, longitude) <= radius) \
+        .all()
 
-    for query in queries:
-        app.logger.warning("query is %s", query)
+
+def to_carpark_response(carpark, curr_latitude, curr_longitude):
+    return CarParkResponse(carpark.address, carpark.price, carpark.latitude, carpark.longitude,
+                           carpark.great_circle_distance_from(curr_latitude, curr_longitude))
 
 
-def distance_from(latitude1, longitude1, latitude2, longitude2):
-    lat_rad_diff = math.radians(latitude2 - latitude1)
-    lon_rad_diff = math.radians(longitude2 - longitude1)
-    a = math.sin(lat_rad_diff / 2) ** 2 + \
-        math.cos(math.radians(latitude1)) * math.cos(math.radians(latitude2)) * \
-        math.sin(lon_rad_diff / 2) ** 2
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    d = 6378.137 * c
-
-    return d * 1000  # in meters
-
+class CarParkResponse:
+    def __init__(self, address, price, latitude, longitude, curr_distance):
+        self.address = address
+        self.price = price
+        self.latitude = latitude
+        self.longitude = longitude
+        self.curr_distance = curr_distance

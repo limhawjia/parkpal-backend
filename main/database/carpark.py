@@ -19,7 +19,7 @@ class CarPark(Base):
     third_party_id = Column(String, nullable=False)
 
     @hybrid_method
-    def distance_from(self, latitude, longitude):
+    def great_circle_distance_from(self, latitude, longitude):
         lat_rad_diff = math.radians(latitude - self.latitude)
         lon_rad_diff = math.radians(longitude - self.longitude)
         a = math.sin(lat_rad_diff / 2) ** 2 + \
@@ -31,8 +31,15 @@ class CarPark(Base):
 
         return d * 1000  # in meters
 
-    @distance_from.expression
-    def distance_from(cls, latitude, longitude, app):
-        a = func.power(func.abs(cls.latitude - latitude), 2)
-        b = func.power(func.abs(cls.longitude - longitude), 2)
-        return func.sqrt(a + b)
+    @great_circle_distance_from.expression
+    def great_circle_distance_from(cls, latitude, longitude):
+        lat_rad_diff = func.radians(latitude - cls.latitude)
+        lon_rad_diff = func.radians(longitude - cls.longitude)
+        a = func.power(func.sin(lat_rad_diff / 2), 2) + \
+            func.cos(func.radians(cls.latitude)) * func.cos(func.radians(latitude)) * \
+            func.power(func.sin(lon_rad_diff / 2), 2)
+
+        c = 2 * func.atan2(func.sqrt(a), func.sqrt(1 - a))
+        d = EARTH_RADIUS * c
+
+        return d * 1000  # in meters
