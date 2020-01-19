@@ -20,8 +20,8 @@ def get_availability():
     queries = query_carparks_within(latitude, longitude, radius, session)
     session.close()
 
-    responses = map(to_carpark_response, queries)
-    return jsonify(responses)
+    responses = map(lambda x: to_carpark_response(x, latitude, longitude), queries)
+    return jsonify(list(responses))
 
 
 def query_carparks_within(latitude, longitude, radius, session):
@@ -32,15 +32,11 @@ def query_carparks_within(latitude, longitude, radius, session):
 
 
 def to_carpark_response(carpark, curr_latitude, curr_longitude):
-    return CarParkResponse(carpark.address, carpark.price, carpark.latitude, carpark.longitude, carpark.lots_available,
-                           carpark.great_circle_distance_from(curr_latitude, curr_longitude))
+    return {'address': carpark.address,
+            'price': carpark.price,
+            'latitude': carpark.latitude,
+            'longitude': carpark.longitude,
+            'lots_available': carpark.lots_available,
+            'curr_distance': carpark.great_circle_distance_from(curr_latitude, curr_longitude)
+            }
 
-
-class CarParkResponse:
-    def __init__(self, address, price, latitude, longitude, lots_available, curr_distance):
-        self.address = address
-        self.price = price
-        self.latitude = latitude
-        self.longitude = longitude
-        self.lots_available = lots_available
-        self.curr_distance = curr_distance
