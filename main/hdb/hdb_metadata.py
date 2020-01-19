@@ -28,7 +28,7 @@ def pull():
 
     raw_carparks = response.json()["result"]["records"]
 
-    transformations1 = itertools.islice(raw_carparks, 10)
+    transformations1 = itertools.islice(raw_carparks, 100)
     transformations2 = map(convert_to_data_model, transformations1)
     transformations3 = map(gc.get_coordinate_from_address, transformations2)
     transformations4 = filter(None, transformations3)
