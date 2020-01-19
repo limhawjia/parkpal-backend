@@ -28,7 +28,7 @@ class Database:
 
     def __init__(self):
         if Database.__instance is not None:
-            raise Exception("This class is a singleton!")
+            raise Exception("Database class is a singleton.")
         else:
             Base.metadata.create_all(self.engine)
             self.session = sessionmaker(bind=self.engine)

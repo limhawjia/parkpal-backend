@@ -24,5 +24,6 @@ services:
     environment:
       GOOGLE_GEOCODING_API_KEY: ${GOOGLE_GEOCODING_API_KEY}
       URA_API_ACCESS_KEY: ${URA_API_ACCESS_KEY}
+      LTA_API_ACCESS_KEY: ${LTA_API_ACCESS_KEY}
     depends_on:
       - db
