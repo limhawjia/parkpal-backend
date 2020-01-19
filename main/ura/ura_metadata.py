@@ -6,9 +6,9 @@ import pytz
 import requests
 
 from main.database import CarPark
-from main.database import Database
 from main.database.source import Source
 
+import main.database.carpark_utils as cu
 import main.geocoding as gc
 
 token_url = 'https://www.ura.gov.sg/uraDataService/insertNewToken.action'
@@ -49,7 +49,7 @@ def pull():
     transformations8 = filter(None, transformations7)
     carpark_data_models = list(transformations8)
 
-    Database.get_instance().update_carpark_metadata(carpark_data_models)
+    cu.update_carpark_metadata(carpark_data_models)
 
 
 def convert_to_data_model(raw_carpark):
@@ -64,6 +64,3 @@ def start():
     log_pull()
     pull()
     print("Pull succeeded.")
-
-
-start()

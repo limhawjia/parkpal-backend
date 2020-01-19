@@ -1,14 +1,13 @@
 import itertools
-import os
 from datetime import datetime
 
 import pytz
 import requests
 
 from main.database import CarPark
-from main.database import Database
 from main.database.source import Source
 
+import main.database.carpark_utils as cu
 import main.geocoding as gc
 
 url = 'https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c'
@@ -34,7 +33,7 @@ def pull():
     transformations4 = filter(None, transformations3)
     carpark_data_models = list(transformations4)
 
-    Database.get_instance().update_carpark_metadata(carpark_data_models)
+    cu.update_carpark_metadata(carpark_data_models)
 
 
 def convert_to_data_model(raw_carpark):
