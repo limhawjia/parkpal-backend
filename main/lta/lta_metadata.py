@@ -32,7 +32,7 @@ def pull():
 
     transformations1 = itertools.islice(raw_carparks, 100)
     transformations2 = map(convert_to_data_model, transformations1)
-    transformations3 = filter(None, transformations2)
+    transformations3 = filter(lambda x: x is not None, transformations2)
     carpark_data_models = list(transformations3)
 
     cu.update_carpark_metadata(carpark_data_models)
