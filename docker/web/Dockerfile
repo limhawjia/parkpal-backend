@@ -10,5 +10,5 @@ COPY ./main/ /main
 COPY requirements.txt /
 
 RUN pip install -r requirements.txt
-RUN cd main
+WORKDIR main
 CMD ["flask", "run", "--host=0.0.0.0"]
