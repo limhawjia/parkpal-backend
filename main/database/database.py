@@ -18,10 +18,21 @@ def get_connection_string():
 
 class Database:
     engine = db.create_engine(get_connection_string())
+    __instance = None
+
+    @staticmethod
+    def get_instance():
+        if Database.__instance is None:
+            Database()
+        return Database.__instance
 
     def __init__(self):
-        Base.metadata.create_all(self.engine)
-        self.session = sessionmaker(bind=self.engine)
+        if Database.__instance is not None:
+            raise Exception("This class is a singleton!")
+        else:
+            Base.metadata.create_all(self.engine)
+            self.session = sessionmaker(bind=self.engine)
+            Database.__instance = self
 
     def get_session(self):
         return self.session()
