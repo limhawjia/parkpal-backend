@@ -1,7 +1,16 @@
 from .database import Base
+from sqlalchemy import Column, Integer, String, DECIMAL, Enum
 from sqlalchemy import Column, Integer, String, DECIMAL
 from sqlalchemy.ext.hybrid import hybrid_method
 import math
+import enum
+
+
+class Source(enum.Enum):
+    HDB = 1,
+    LTA = 2,
+    URA = 3
+
 
 
 class CarPark(Base):
@@ -12,6 +21,8 @@ class CarPark(Base):
     longitude = Column(DECIMAL, nullable=False)
     latitude = Column(DECIMAL, nullable=False)
     lots_available = Column(Integer)
+    source = Column(Enum(Source), nullable=False, )
+    third_party_id = Column(String, nullable=False)
 
     @hybrid_method
     def distance_from(self, latitude, longitude):

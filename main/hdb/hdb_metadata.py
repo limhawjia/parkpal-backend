@@ -1,44 +1,50 @@
-# Python program to pull, normalize and store carpark data.
-
-# Python program to pull, normalize and store parking data.
-
+import itertools
 import os
+from datetime import datetime
+
 import pytz
 import requests
-import itertools
-from datetime import datetime
+
 from main.database import CarPark
 from main.database import Database
+from main.database.carpark import Source
 
 url = 'https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c'
 
 
-def main():
-    log_cron()
-    cron()
-
-
-def log_cron():
+def log_pull():
     singapore_timezone = pytz.timezone('Asia/Singapore')
     current_datetime = datetime.now(singapore_timezone).strftime("%H:%M:%S")
     print("Pulling carpark metadata from HDB: " + current_datetime)
 
 
-def cron():
-    print("Pulling HDB carpark metadata...")
+def pull():
+    response = requests.get(url)
 
-    raw_carparks = requests.get(url).json()["result"]["records"]
-    transformations = map(convert_to_data_model, raw_carparks)
-    carpark_data_models = map(get_coordinate_from_address, transformations)
+    if not response.content:
+        print("Empty response. HDB carpark metadata not available.")
+        return
+
+    raw_carparks = response.json()["result"]["records"]
+    transformations1 = map(convert_to_data_model, raw_carparks)
+    transformations2 = map(get_coordinate_from_address, transformations1)
+    transformations3 = itertools.islice(transformations2, 10)
+    carpark_data_models = filter(None, transformations3)
+
+    for carpark in carpark_data_models:
+        print(carpark)
 
     session = Database().get_session()
-    session.bulk_save_objects(carpark_data_models)
+    session.add_all(carpark_data_models)
     session.commit()
 
 
 def convert_to_data_model(raw_carpark):
     address = raw_carpark["address"]
-    return CarPark(address=address)
+    source = Source.HDB
+    third_party_id = raw_carpark["carpark_number"]
+
+    return CarPark(address=address, source=source, third_party_id=third_party_id)
 
 
 def get_coordinate_from_address(data_model):
@@ -52,5 +58,9 @@ def get_coordinate_from_address(data_model):
         coordinates = requests.get(endpoint, params=payload).json()['results'][0]['geometry']['location']
         return CarPark(address=data_model.address, longitude=coordinates['lng'], latitude=coordinates['lat'])
 
+    return None
 
-main()
+
+def start():
+    log_pull()
+    pull()
