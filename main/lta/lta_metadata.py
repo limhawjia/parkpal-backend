@@ -30,9 +30,10 @@ def pull():
 
     raw_carparks = response.json()['value']
 
-    transformations1 = itertools.islice(raw_carparks, 10)
+    transformations1 = itertools.islice(raw_carparks, 100)
     transformations2 = map(convert_to_data_model, transformations1)
-    carpark_data_models = list(transformations2)
+    transformations3 = filter(None, transformations2)
+    carpark_data_models = list(transformations3)
 
     cu.update_carpark_metadata(carpark_data_models)
 
@@ -46,7 +47,12 @@ def convert_to_data_model(raw_carpark):
     address = raw_carpark["Development"]
     source = Source.LTA
     third_party_id = raw_carpark["CarParkID"]
-    latitude, longitude = get_lat_long(raw_carpark['Location'])
+    coordinate = raw_carpark['Location']
+
+    if len(coordinate) != 2:
+        return None
+
+    latitude, longitude = get_lat_long(coordinate)
 
     return CarPark(address=address,
                    source=source,

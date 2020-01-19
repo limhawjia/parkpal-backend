@@ -39,15 +39,12 @@ def pull():
 
     raw_carparks = response.json()['Result']
 
-    transformations1 = itertools.islice(raw_carparks, 10)
-    transformations2 = map(convert_to_data_model, transformations1)
-    transformations3 = itertools.groupby(transformations2, lambda x: x.third_party_id)
-    transformations4 = map(lambda x: x[1], transformations3)
-    transformations5 = map(lambda x: list(x), transformations4)
-    transformations6 = map(lambda x: x[0], transformations5)
-    transformations7 = map(gc.get_coordinate_from_address, transformations6)
-    transformations8 = filter(None, transformations7)
-    carpark_data_models = list(transformations8)
+    transformations1 = itertools.islice(raw_carparks, 100)
+    transformations2 = filter(lambda x: x['vehCat'] == 'Car', transformations1)
+    transformations3 = map(convert_to_data_model, transformations2)
+    transformations4 = map(gc.get_coordinate_from_address, transformations3)
+    transformations5 = filter(None, transformations4)
+    carpark_data_models = list(transformations5)
 
     cu.update_carpark_metadata(carpark_data_models)
 

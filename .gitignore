@@ -130,4 +130,4 @@ dmypy.json
 
 *.idea/
 
-*/cron/database/
+secrets

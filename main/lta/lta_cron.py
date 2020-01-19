@@ -5,7 +5,6 @@ from datetime import datetime
 import pytz
 import requests
 
-from main.database import CarPark
 from main.database.source import Source
 
 import main.database.carpark_utils as cu
@@ -30,7 +29,7 @@ def pull():
 
     raw_data = response.json()['value']
 
-    transformations1 = itertools.islice(raw_data, 10)
+    transformations1 = itertools.islice(raw_data, 100)
     transformations2 = map(convert_to_data_set, transformations1)
     carpark_data_sets = list(transformations2)
 
@@ -49,3 +48,6 @@ def start():
     log_pull()
     pull()
     print("Pull succeeded.")
+
+
+start()
