@@ -3,6 +3,9 @@ import sqlalchemy as db
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from main.database import CarPark
+from main.database.source import Source
+
 Base = declarative_base()
 
 
@@ -18,10 +21,40 @@ def get_connection_string():
 
 class Database:
     engine = db.create_engine(get_connection_string())
+    __instance = None
+
+    @staticmethod
+    def get_instance():
+        if Database.__instance is None:
+            Database()
+        return Database.__instance
 
     def __init__(self):
-        Base.metadata.create_all(self.engine)
-        self.session = sessionmaker(bind=self.engine)
+        if Database.__instance is not None:
+            raise Exception("This class is a singleton!")
+        else:
+            Base.metadata.create_all(self.engine)
+            self.session = sessionmaker(bind=self.engine)
+            Database.__instance = self
 
     def get_session(self):
         return self.session()
+
+    def update_carpark_metadata(self, carpark_data_models):
+        session = self.session()
+
+        for carpark in carpark_data_models:
+            query = session.query(CarPark) \
+                .filter(CarPark.source == Source.HDB) \
+                .filter(CarPark.third_party_id == carpark.third_party_id) \
+                .first()
+
+            if not query:
+                session.add(carpark)
+                session.commit()
+                continue
+
+            query.address = carpark.address
+            query.longitude = carpark.longitude
+            query.latitude = carpark.latitude
+            session.commit()
