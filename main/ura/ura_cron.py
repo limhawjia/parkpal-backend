@@ -5,11 +5,9 @@ from datetime import datetime
 import pytz
 import requests
 
-from main.database import CarPark
 from main.database.source import Source
 
 import main.database.carpark_utils as cu
-import main.geocoding as gc
 
 token_url = 'https://www.ura.gov.sg/uraDataService/insertNewToken.action'
 access_key = os.environ.get("URA_API_ACCESS_KEY", None) or exit('URA_API_ACCESS_KEY not defined.')
@@ -34,7 +32,7 @@ def pull():
     response = requests.get(data_url, headers=headers)
 
     if not response.content:
-        print("Empty response. URA carpark metadata not available")
+        print("Empty response. URA carpark availability not available")
         return
 
     raw_data = response.json()['Result']

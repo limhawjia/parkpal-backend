@@ -21,7 +21,7 @@ def pull():
     response = requests.get(url)
 
     if not response.content:
-        print("Empty response. HDB carpark metadata not available.")
+        print("Empty response. HDB carpark availability not available.")
         return
 
     raw_data = response.json()["items"]["carpark_data"]
