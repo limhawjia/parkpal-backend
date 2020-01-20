@@ -28,8 +28,6 @@ def pull():
         print("Empty response. LTA carpark metadata not available")
         return
 
-    print('fuck')
-
     raw_carparks = response.json()['value']
 
     transformations1 = itertools.islice(raw_carparks, 100)
