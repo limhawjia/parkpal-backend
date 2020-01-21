@@ -7,6 +7,7 @@ import main.geocoding as gc
 # longitude and latitude, it is populated use Google's geocoding services in this method. Existing carparks
 # whose addresses have not changed will not be added/updated.
 def update_carpark_metadata(carpark_data_models):
+    gc_use_count = 0
     session = Database.get_instance().get_session()
 
     for carpark in carpark_data_models:
@@ -16,7 +17,10 @@ def update_carpark_metadata(carpark_data_models):
             .first()
 
         if not query:
-            carpark_with_coordinates = populate_carpark_data_model_with_coordinates(carpark)
+            carpark_with_coordinates, gc_used = populate_carpark_data_model_with_coordinates(carpark)
+
+            if gc_used:
+                gc_use_count = gc_use_count + 1
 
             if carpark_with_coordinates is not None:
                 session.add(carpark_with_coordinates)
@@ -25,7 +29,10 @@ def update_carpark_metadata(carpark_data_models):
             continue
 
         if query.address != carpark.address:
-            carpark_with_coordinates = populate_carpark_data_model_with_coordinates(carpark)
+            carpark_with_coordinates, gc_used = populate_carpark_data_model_with_coordinates(carpark)
+
+            if gc_used:
+                gc_use_count = gc_use_count + 1
 
             if carpark_with_coordinates is not None:
                 query.address = carpark_with_coordinates.address
@@ -35,15 +42,17 @@ def update_carpark_metadata(carpark_data_models):
 
             continue
 
+    print(f'Google\'s geocoding services used {gc_use_count} times.')
+
     session.close()
 
 
 # Helper method to call Google's geocoding services
 def populate_carpark_data_model_with_coordinates(carpark_data_model):
     if carpark_data_model.latitude is not None and carpark_data_model.longitude is not None:
-        return carpark_data_model
+        return carpark_data_model, False
     else:
-        return gc.update_data_model_with_coordinates(carpark_data_model)
+        return gc.update_data_model_with_coordinates(carpark_data_model), True
 
 
 # Method to update carpark availability. The carpark must exist within the database for this method call to

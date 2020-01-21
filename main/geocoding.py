@@ -11,6 +11,8 @@ def update_data_model_with_coordinates(data_model):
     payload = {'address': address, 'key': os.environ['GOOGLE_GEOCODING_API_KEY']}
     results = requests.get(endpoint, params=payload).json()['results']
 
+    print(f'Google geocoding service used for Carpark: {address}, {data_model.source}, {data_model.third_party_id}')
+
     if len(results) != 0:
         coordinates = requests.get(endpoint, params=payload).json()['results'][0]['geometry']['location']
         return CarPark(address=data_model.address,
@@ -18,4 +20,6 @@ def update_data_model_with_coordinates(data_model):
                        third_party_id=data_model.third_party_id,
                        longitude=coordinates['lng'], latitude=coordinates['lat'])
 
+    print(f'Google geocoding for Carpark: {address}, {data_model.source}, {data_model.third_party_id} ' +
+          f'did not yield any results')
     return None

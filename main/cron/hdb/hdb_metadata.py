@@ -7,6 +7,7 @@ import requests
 from main.cron import MetadataQueryLimit
 from main.database import CarPark
 from main.database.source import Source
+from main.tmpc import Svy21Converter
 
 import main.database.carpark_utils as cu
 
@@ -39,8 +40,14 @@ def convert_to_data_model(raw_carpark):
     address = raw_carpark["address"]
     source = Source.HDB
     third_party_id = raw_carpark["car_park_no"]
+    northing = float(raw_carpark["y_coord"])
+    easting = float(raw_carpark["x_coord"])
 
-    return CarPark(address=address, source=source, third_party_id=third_party_id)
+    latitude, longitude = Svy21Converter.convert_to_geographic(northing, easting)
+
+    return CarPark(address=address, source=source,
+                   third_party_id=third_party_id, latitude=latitude,
+                   longitude=longitude)
 
 
 def start():

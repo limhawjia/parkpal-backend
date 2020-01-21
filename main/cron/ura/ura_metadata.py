@@ -8,6 +8,7 @@ import requests
 from main.cron import MetadataQueryLimit
 from main.database import CarPark
 from main.database.source import Source
+from main.tmpc import Svy21Converter
 
 import main.database.carpark_utils as cu
 
@@ -52,7 +53,24 @@ def convert_to_data_model(raw_carpark):
     source = Source.URA
     third_party_id = raw_carpark["ppCode"]
 
-    return CarPark(address=address, source=source, third_party_id=third_party_id)
+    try:
+        geometries = raw_carpark["geometries"]
+    except KeyError:
+        geometries = []
+
+    if len(geometries) == 0:
+        return CarPark(address=address, source=source,
+                       third_party_id=third_party_id)
+
+    coordinates = geometries[0]["coordinates"].split(",")
+    easting = float(coordinates[0])
+    northing = float(coordinates[1])
+
+    latitude, longitude = Svy21Converter.convert_to_geographic(northing, easting)
+
+    return CarPark(address=address, source=source,
+                   third_party_id=third_party_id, latitude=latitude,
+                   longitude=longitude)
 
 
 def start():
