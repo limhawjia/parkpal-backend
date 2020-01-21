@@ -9,7 +9,6 @@ from main.database import CarPark
 from main.database.source import Source
 
 import main.database.carpark_utils as cu
-import main.geocoding as gc
 
 url = 'https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c'
 

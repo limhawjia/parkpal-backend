@@ -10,7 +10,6 @@ from main.database import CarPark
 from main.database.source import Source
 
 import main.database.carpark_utils as cu
-import main.geocoding as gc
 
 token_url = 'https://www.ura.gov.sg/uraDataService/insertNewToken.action'
 access_key = os.environ.get("URA_API_ACCESS_KEY", None) or exit('URA_API_ACCESS_KEY not defined.')

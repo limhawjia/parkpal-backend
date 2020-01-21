@@ -21,7 +21,8 @@ def update_carpark_metadata(carpark_data_models):
             if carpark_with_coordinates is not None:
                 session.add(carpark_with_coordinates)
                 session.commit()
-                continue
+
+            continue
 
         if query.address != carpark.address:
             carpark_with_coordinates = populate_carpark_data_model_with_coordinates(carpark)
@@ -31,14 +32,15 @@ def update_carpark_metadata(carpark_data_models):
                 query.latitude = carpark_with_coordinates.latitude
                 query.longitude = carpark_with_coordinates.longitude
                 session.commit()
-                continue
+
+            continue
 
     session.close()
 
 
 # Helper method to call Google's geocoding services
 def populate_carpark_data_model_with_coordinates(carpark_data_model):
-    if not carpark_data_model.latitude and not carpark_data_model.longitude:
+    if carpark_data_model.latitude is not None and carpark_data_model.longitude is not None:
         return carpark_data_model
     else:
         return gc.update_data_model_with_coordinates(carpark_data_model)
