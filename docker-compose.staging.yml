@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: "parking_lots"
   web:
     image: parkpal-backend_web:latest
+    command: ./wait-for-it.sh db:5432 && flas run --host=0.0.0.0
     ports:
       - 80:5000
     depends_on:
@@ -17,6 +18,7 @@ services:
       DB_CONNECTION_STRING: "host=db;port=5432;database.py=users;username=ParkPals;password=ParkPals"
   cron:
     image: parkpal-backend_cron:latest
+    command: ./wait-for-it.sh db:5432 && flas run --host=0.0.0.0 && ./cron_start.sh
     depends_on:
       - db
     environment:

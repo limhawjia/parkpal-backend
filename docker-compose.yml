@@ -12,8 +12,11 @@ services:
     build:
       context: ./
       dockerfile: docker/web/Dockerfile
+    command: /wait-for-it.sh db:5432 -- flask run --host=0.0.0.0
     ports:
       - 80:5000
+    volumes:
+      - ./scripts/wait-for-it.sh:/wait-for-it.sh
     depends_on:
       - db
 
@@ -21,11 +24,14 @@ services:
     build:
       context: ./
       dockerfile: docker/cron/Dockerfile
+    command: /wait-for-it.sh db:5432 -- ./cron_start.sh
     environment:
       GOOGLE_GEOCODING_API_KEY: ${GOOGLE_GEOCODING_API_KEY}
       URA_API_ACCESS_KEY: ${URA_API_ACCESS_KEY}
       LTA_API_ACCESS_KEY: ${LTA_API_ACCESS_KEY}
       QUERY_LIMIT: ${QUERY_LIMIT}
       CRON_FREQUENCY: ${CRON_FREQUENCY}
+    volumes:
+      - ./scripts/wait-for-it.sh:/wait-for-it.sh
     depends_on:
       - db
