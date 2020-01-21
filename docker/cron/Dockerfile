@@ -11,7 +11,7 @@ ENV DB_PORT "5432"
 ENV DB_NAME "carparks"
 
 COPY main/ /main
-COPY cron /
+COPY /scripts/cron /
 COPY /scripts/cron_start.sh /
 COPY requirements.txt /
 

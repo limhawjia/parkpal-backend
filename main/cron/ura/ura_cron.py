@@ -37,10 +37,9 @@ def pull():
 
     raw_data = response.json()['Result']
 
-    transformations1 = itertools.islice(raw_data, 100)
-    transformations2 = filter(lambda x: x["lotType"] == 'C', transformations1)
-    transformations3 = map(convert_to_data_set, transformations2)
-    carpark_data_sets = list(transformations3)
+    transformations1 = filter(lambda x: x["lotType"] == 'C', raw_data)
+    transformations2 = map(convert_to_data_set, transformations1)
+    carpark_data_sets = list(transformations2)
 
     cu.update_carpark_availability(carpark_data_sets)
 

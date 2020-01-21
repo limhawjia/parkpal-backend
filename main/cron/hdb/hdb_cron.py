@@ -26,9 +26,8 @@ def pull():
 
     raw_data = response.json()["items"][0]["carpark_data"]
 
-    transformations1 = itertools.islice(raw_data, 100)
-    transformations2 = map(convert_to_data_set, transformations1)
-    carpark_data_sets = list(transformations2)
+    transformations1 = map(convert_to_data_set, raw_data)
+    carpark_data_sets = list(transformations1)
 
     cu.update_carpark_availability(data_sets=carpark_data_sets)
 
