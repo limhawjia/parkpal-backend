@@ -8,6 +8,8 @@ import main.geocoding as gc
 # whose addresses have not changed will not be added/updated.
 def update_carpark_metadata(carpark_data_models):
     gc_use_count = 0
+    carpark_add_count = 0
+    carpark_modified_count = 0
     session = Database.get_instance().get_session()
 
     for carpark in carpark_data_models:
@@ -25,6 +27,7 @@ def update_carpark_metadata(carpark_data_models):
             if carpark_with_coordinates is not None:
                 session.add(carpark_with_coordinates)
                 session.commit()
+                carpark_add_count = carpark_add_count + 1
 
             continue
 
@@ -39,12 +42,15 @@ def update_carpark_metadata(carpark_data_models):
                 query.latitude = carpark_with_coordinates.latitude
                 query.longitude = carpark_with_coordinates.longitude
                 session.commit()
+                carpark_modified_count = carpark_modified_count + 1
 
             continue
 
-    print(f'Google\'s geocoding services used {gc_use_count} times.')
-
     session.close()
+    print(f'{len(carpark_data_models)} carparks were pulled.')
+    print(f'{carpark_add_count} new carparks were added.')
+    print(f'{carpark_modified_count} carparks were modified.')
+    print(f'Google\'s geocoding services used {gc_use_count} times.')
 
 
 # Helper method to call Google's geocoding services
