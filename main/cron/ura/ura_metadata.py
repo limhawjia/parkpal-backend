@@ -5,6 +5,7 @@ from datetime import datetime
 import pytz
 import requests
 
+from main.cron import MetadataQueryLimit
 from main.database import CarPark
 from main.database.source import Source
 
@@ -39,7 +40,7 @@ def pull():
 
     raw_carparks = response.json()['Result']
 
-    transformations1 = itertools.islice(raw_carparks, 100)
+    transformations1 = itertools.islice(raw_carparks, MetadataQueryLimit)
     transformations2 = filter(lambda x: x['vehCat'] == 'Car', transformations1)
     transformations3 = map(convert_to_data_model, transformations2)
     transformations4 = map(gc.get_coordinate_from_address, transformations3)

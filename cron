@@ -1,5 +1,5 @@
 PYTHONPATH="/usr/local/lib/python3.7/site-packages"
 
-* * * * * . /root/project_env.sh && cd / && python3 -m main.hdb.hdb_cron > /hdb_cron.log 2>&1
-* * * * * . /root/project_env.sh && cd / && python3 -m main.ura.ura_cron > /ura_cron.log 2>&1
-* * * * * . /root/project_env.sh && cd / && python3 -m main.lta.lta_cron > /lta_cron.log 2>&1
+* * * * * . /root/project_env.sh && cd / && python3 -m main.cron.hdb.hdb_cron > /hdb_cron.log 2>&1
+* * * * * . /root/project_env.sh && cd / && python3 -m main.cron.ura.ura_cron > /ura_cron.log 2>&1
+* * * * * . /root/project_env.sh && cd / && python3 -m main.cron.lta.lta_cron > /lta_cron.log 2>&1
