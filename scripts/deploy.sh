@@ -1,9 +1,7 @@
 #!/bin/bash
 
-scp -i ./credentials -o StrictHostKeyChecking=no -pr "$(pwd)" ubuntu@ec2-54-255-145-37.ap-southeast-1.compute.amazonaws.com:~/
-ssh -i ./credentials -o StrictHostKeyChecking=no ubuntu@ec2-54-255-145-37.ap-southeast-1.compute.amazonaws.com cd ParkPalBackend && docker-compose build
-ssh -i ./credentials -o StrictHostKeyChecking=no ubuntu@ec2-54-255-145-37.ap-southeast-1.compute.amazonaws.com docker container stop $(docker container ls -aq)
-ssh -i ./credentials -o StrictHostKeyChecking=no ubuntu@ec2-54-255-145-37.ap-southeast-1.compute.amazonaws.com docker swarm init || true
-ssh -i ./credentials -o StrictHostKeyChecking=no ubuntu@ec2-54-255-145-37.ap-southeast-1.compute.amazonaws.com docker stack deploy --compose-file ./ParkPalBackend/docker-compose.staging.yml ParkPal
-
-
+scp -i ./credentials -o StrictHostKeyChecking=no -pr "$(pwd)" "$HOST_NAME":~/
+ssh -i ./credentials -o StrictHostKeyChecking=no "$HOST_NAME" cd ParkPalBackend && docker-compose build
+ssh -i ./credentials -o StrictHostKeyChecking=no "$HOST_NAME" docker container stop "$(docker container ls -aq)"
+ssh -i ./credentials -o StrictHostKeyChecking=no "$HOST_NAME" docker swarm init || true
+ssh -i ./credentials -o StrictHostKeyChecking=no "$HOST_NAME" docker stack deploy --compose-file ./ParkPalBackend/docker-compose.staging.yml ParkPal
