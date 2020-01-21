@@ -1,8 +1,11 @@
-from .carpark import CarPark
-from .source import Source
-from .database import Database
+from main.database.carpark import CarPark
+from main.database import Database
+import main.geocoding as gc
 
 
+# Main method to add/update the database with new carpark metadata. If the provided data model does not contain a
+# longitude and latitude, it is populated use Google's geocoding services in this method. Existing carparks
+# whose addresses have not changed will not be added/updated.
 def update_carpark_metadata(carpark_data_models):
     session = Database.get_instance().get_session()
 
@@ -13,18 +16,37 @@ def update_carpark_metadata(carpark_data_models):
             .first()
 
         if not query:
-            session.add(carpark)
-            session.commit()
-            continue
+            carpark_with_coordinates = populate_carpark_data_model_with_coordinates(carpark)
 
-        query.address = carpark.address
-        query.longitude = carpark.longitude
-        query.latitude = carpark.latitude
-        session.commit()
+            if carpark_with_coordinates is not None:
+                session.add(carpark_with_coordinates)
+                session.commit()
+                continue
+
+        if query.address != carpark.address:
+            carpark_with_coordinates = populate_carpark_data_model_with_coordinates(carpark)
+
+            if carpark_with_coordinates is not None:
+                query.address = carpark_with_coordinates.address
+                query.latitude = carpark_with_coordinates.latitude
+                query.longitude = carpark_with_coordinates.longitude
+                session.commit()
+                continue
 
     session.close()
 
 
+# Helper method to call Google's geocoding services
+def populate_carpark_data_model_with_coordinates(carpark_data_model):
+    if not carpark_data_model.latitude and not carpark_data_model.longitude:
+        return carpark_data_model
+    else:
+        return gc.update_data_model_with_coordinates(carpark_data_model)
+
+
+# Main method to update carpark availability. The carpark must exist within the database for this method call to
+# succeed. If the carpark has not been already registered in the database, this method call is ignored. The data_set
+# parameter is a tuple consisting of the source, third party id and lots available.
 def update_carpark_availability(data_sets):
     session = Database.get_instance().get_session()
 

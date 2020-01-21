@@ -43,9 +43,7 @@ def pull():
     transformations1 = itertools.islice(raw_carparks, MetadataQueryLimit)
     transformations2 = filter(lambda x: x['vehCat'] == 'Car', transformations1)
     transformations3 = map(convert_to_data_model, transformations2)
-    transformations4 = map(gc.get_coordinate_from_address, transformations3)
-    transformations5 = filter(None, transformations4)
-    carpark_data_models = list(transformations5)
+    carpark_data_models = list(transformations3)
 
     cu.update_carpark_metadata(carpark_data_models)
 

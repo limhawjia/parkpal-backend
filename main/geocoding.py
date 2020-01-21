@@ -3,7 +3,9 @@ import requests
 from main.database import CarPark
 
 
-def get_coordinate_from_address(data_model):
+# Helper method to update a Carpark data model with coordinates using Google's geocoding services. Note that None is
+# returned if the search does not return a result
+def update_data_model_with_coordinates(data_model):
     address = data_model.address + 'Singapore'
     endpoint = 'https://maps.googleapis.com/maps/api/geocode/json'
     payload = {'address': address, 'key': os.environ['GOOGLE_GEOCODING_API_KEY']}
