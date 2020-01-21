@@ -30,6 +30,8 @@ As our services rely on certain third party applications and apis, there a few s
 * `LTA_API_ACCESS_KEY` - can be obtained through LTA's [DataMall](https://www.mytransport.sg/content/mytransport/home/dataMall.html)
 * `GOOGLE_GEOCODING_API_KEY` - your own api key for Google's geocoding services
 
+Google's geocoding services will only be used if the coordinates are missing from a particular carpark's data.
+
 Here are optional variables that can be set based on your preferences:
 
 * `CRON_FREQUENCY` - the frequency at which to update lot availability (in minutes 0 - 59)
