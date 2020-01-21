@@ -22,9 +22,6 @@ RUN touch lta_cron.log
 RUN pip install -r requirements.txt
 RUN chmod +x ./main/startup.py
 RUN chmod +x ./cron_start.sh
-ARG CRON_FREQUENCY
-RUN sed -i "s/\* \* \* \* \*/\*\/$CRON_FREQUENCY \* \* \* \*/g" ./cron
-RUN cat  ./cron
 RUN crontab cron
 
 CMD ["./cron_start.sh"]
