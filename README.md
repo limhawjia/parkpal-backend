@@ -22,7 +22,7 @@ The web api currently provides a single end point for users to query nearby carp
 
 The various services can be deployed easily to a server that runs Docker. Simply copy the folders `docker`, `main`, `scripts` along with `requirements.txt`, `docker-compose.yml` and `docker-compose.staging.yml` into your server. This can be done manually or through a deployment pipeline. Afterwards, you can choose to use `docker-compose` or `docker swarm` to automatically spin up the respective containers for the various services. 
 
-Note that if you choose to use `docker swarm`, you would have to build the respective Docker images first and use `docker-compose.staging.yml` as it does not support build contexts in the compose file. More information can be found on Docker's [official documentation](https://docs.docker.com/).
+Note that if you choose to use `docker swarm`, you would have to build the respective Docker images first and use `docker-compose.staging.yml` as it does not support build contexts in the compose file. If you want your database to be persistent, you can set up a Docker volume in the compose file. More information can be found on Docker's [official documentation](https://docs.docker.com/).
 
 As our services rely on certain third party applications and apis, there a few secrets that have to be injected into the Docker containers through environment variables. Make sure that you have these environment variables set in your server:
 
