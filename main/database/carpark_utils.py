@@ -3,7 +3,7 @@ from main.database import Database
 import main.geocoding as gc
 
 
-# Main method to add/update the database with new carpark metadata. If the provided data model does not contain a
+# Method to add/update the database with new carpark metadata. If the provided data model does not contain a
 # longitude and latitude, it is populated use Google's geocoding services in this method. Existing carparks
 # whose addresses have not changed will not be added/updated.
 def update_carpark_metadata(carpark_data_models):
@@ -46,8 +46,8 @@ def populate_carpark_data_model_with_coordinates(carpark_data_model):
         return gc.update_data_model_with_coordinates(carpark_data_model)
 
 
-# Main method to update carpark availability. The carpark must exist within the database for this method call to
-# succeed. If the carpark has not been already registered in the database, this method call is ignored. The data_set
+# Method to update carpark availability. The carpark must exist within the database for this method call to
+# succeed. If the carpark has not been already registered in the database, this method call is ignored. The data set
 # parameter is a tuple consisting of the source, third party id and lots available.
 def update_carpark_availability(data_sets):
     session = Database.get_instance().get_session()
